@@ -976,9 +976,17 @@ static SPIRVTranspileContext *SDL_ShaderCross_INTERNAL_TranspileFromSPIRV(
         SDL_zeroa(textureBindings);
         Uint32 numTextureBindings = 0;
 
-        result = spvc_compiler_create_shader_resources(compiler, &resources);
+        spvc_set active_variables;
+        result = spvc_compiler_get_active_interface_variables(compiler, &active_variables);
         if (result < 0) {
-            SPVC_ERROR(spvc_compiler_create_shader_resources);
+            SPVC_ERROR(spvc_compiler_get_active_interface_variables);
+            spvc_context_destroy(context);
+            return NULL;
+        }
+
+        result = spvc_compiler_create_shader_resources_for_active_variables(compiler, &resources, active_variables);
+        if (result < 0) {
+            SPVC_ERROR(spvc_compiler_create_shader_resources_for_active_variables);
             spvc_context_destroy(context);
             return NULL;
         }
@@ -1242,9 +1250,17 @@ static SPIRVTranspileContext *SDL_ShaderCross_INTERNAL_TranspileFromSPIRV(
         spvc_msl_resource_binding_2 textureBindings[32];
         Uint32 numTextureBindings = 0;
 
-        result = spvc_compiler_create_shader_resources(compiler, &resources);
+        spvc_set active_variables;
+        result = spvc_compiler_get_active_interface_variables(compiler, &active_variables);
         if (result < 0) {
-            SPVC_ERROR(spvc_compiler_create_shader_resources);
+            SPVC_ERROR(spvc_compiler_get_active_interface_variables);
+            spvc_context_destroy(context);
+            return NULL;
+        }
+
+        result = spvc_compiler_create_shader_resources_for_active_variables(compiler, &resources, active_variables);
+        if (result < 0) {
+            SPVC_ERROR(spvc_compiler_create_shader_resources_for_active_variables);
             spvc_context_destroy(context);
             return NULL;
         }
@@ -1763,9 +1779,17 @@ SDL_ShaderCross_GraphicsShaderMetadata * SDL_ShaderCross_ReflectGraphicsSPIRV(
     spvc_resources resources;
     spvc_reflected_resource *reflected_resources;
 
-    result = spvc_compiler_create_shader_resources(compiler, &resources);
+    spvc_set active_variables;
+    result = spvc_compiler_get_active_interface_variables(compiler, &active_variables);
     if (result < 0) {
-        SPVC_ERROR(spvc_compiler_create_shader_resources);
+        SPVC_ERROR(spvc_compiler_get_active_interface_variables);
+        spvc_context_destroy(context);
+        return NULL;
+    }
+
+    result = spvc_compiler_create_shader_resources_for_active_variables(compiler, &resources, active_variables);
+    if (result < 0) {
+        SPVC_ERROR(spvc_compiler_create_shader_resources_for_active_variables);
         spvc_context_destroy(context);
         return NULL;
     }
@@ -1983,9 +2007,17 @@ SDL_ShaderCross_ComputePipelineMetadata * SDL_ShaderCross_ReflectComputeSPIRV(
     spvc_resources resources;
     spvc_reflected_resource *reflected_resources;
 
-    result = spvc_compiler_create_shader_resources(compiler, &resources);
+    spvc_set active_variables;
+    result = spvc_compiler_get_active_interface_variables(compiler, &active_variables);
     if (result < 0) {
-        SPVC_ERROR(spvc_compiler_create_shader_resources);
+        SPVC_ERROR(spvc_compiler_get_active_interface_variables);
+        spvc_context_destroy(context);
+        return false;
+    }
+
+    result = spvc_compiler_create_shader_resources_for_active_variables(compiler, &resources, active_variables);
+    if (result < 0) {
+        SPVC_ERROR(spvc_compiler_create_shader_resources_for_active_variables);
         spvc_context_destroy(context);
         return false;
     }
